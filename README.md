@@ -65,21 +65,21 @@ dataset_labelをクリーニングしたもの
 
 ## Discussion
 
-|題名|内容|
-|:--:|:--:|
-|||
+| 題名  | 内容  |
+| :---: | :---: |
+|       |       |
 
 ## Notebooks
 
-|題名|内容|
-|:--:|:--:|
-|[Coleridge Initiative - EDA + Naïve Submission 📚](https://www.kaggle.com/josephassaker/coleridge-initiative-eda-na-ve-submission?select=train)|EDAのお手本にする。|
+|                                                                      題名                                                                      |        内容         |
+| :--------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------: |
+| [Coleridge Initiative - EDA + Naïve Submission 📚](https://www.kaggle.com/josephassaker/coleridge-initiative-eda-na-ve-submission?select=train) | EDAのお手本にする。 |
 
 ## Links
 
-|題名|内容|
-|:--:|:--:|
-|||
+| 題名  | 内容  |
+| :---: | :---: |
+|       |       |
 
 ## Logs
 
@@ -90,4 +90,11 @@ NotebooksのColeridge Initiative - EDA + Naïve Submission 📚を参考（ま�
 WordCloudで単語の出現頻度を可視化できたのは面白かったけど、小さくまとめられるのがちょっと...って感じだった。
 
 一応、ここから読み取れることが多そうなので画像として保存してから、眺めてみてもいいかもしれない。
+
+### 4/14
+
+ベースラインモデルを作った。アプローチは論文の文章の中に、データセットの名前があるかどうかを調べる簡単なもの。
+
+とりあえず、形態素解析してからもう一度作り直そうと思う。
+
 
