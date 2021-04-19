@@ -67,7 +67,7 @@ dataset_labelをクリーニングしたもの
 
 | 題名  | 内容  |
 | :---: | :---: |
-|       |       |
+|  [A List Of Kaggle NLP Competitions & solutions](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data/discussion/228227)     |   過去のNLPコンペで使われた解放集。Google　Quest　Q＆Aコンペが似たようなタスクだと思う。    |
 
 ## Notebooks
 
@@ -97,4 +97,6 @@ WordCloudで単語の出現頻度を可視化できたのは面白かったけ�
 
 とりあえず、形態素解析してからもう一度作り直そうと思う。
 
+# 4/19
 
+色々調べてた。モデルの作り方がいまいちわからない...
