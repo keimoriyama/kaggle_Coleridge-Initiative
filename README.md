@@ -70,6 +70,7 @@ dataset_labelをクリーニングしたもの
 | 題名  | 内容  |
 | :---: | :---: |
 |  [A List Of Kaggle NLP Competitions & solutions](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data/discussion/228227)     |   過去のNLPコンペで使われた解放集。Google　Quest　Q＆Aコンペが似たようなタスクだと思う。    |
+|[All you wanted to know about key phrase extraction and NER and you were too afraid to ask](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data/discussion/228376)|NER(named entity recognition)に関するブログや論文へのリンク。いかにしてキーワードとなるような単語を抽出するかが書かれている。|
 
 ## Notebooks
 
@@ -81,7 +82,7 @@ dataset_labelをクリーニングしたもの
 
 | 題名  | 内容  |
 | :---: | :---: |
-|       |       |
+| [100 Must-Read NLP Papers](https://github.com/mhagiwara/100-nlp-papers)|自然言語処理の論文で重要なものを100本集めたもの。とりあえず基礎知識をつけるために読んで行きたいと思った。       |
 
 ## Logs
 
@@ -110,3 +111,9 @@ WordCloudで単語の出現頻度を可視化できたのは面白かったけ�
 stopwordsを導入してもう一度前処理を直していきたい
 
 dataset_labelsも確認してからsubmissionファイルを作る
+
+# 5/5
+
+NERのブログに目を通してみたけど、これがこのコンペにどのように使えばいいのか良いイメージがわかない。
+
+各論文のタイトル毎にNERで語を抽出して、その語が含まれているかどうかを調べてみる方針もありかもしれないと思った。
