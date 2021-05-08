@@ -71,6 +71,7 @@ dataset_labelをクリーニングしたもの
 | :---: | :---: |
 |  [A List Of Kaggle NLP Competitions & solutions](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data/discussion/228227)     |   過去のNLPコンペで使われた解放集。Google　Quest　Q＆Aコンペが似たようなタスクだと思う。    |
 |[All you wanted to know about key phrase extraction and NER and you were too afraid to ask](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data/discussion/228376)|NER(named entity recognition)に関するブログや論文へのリンク。いかにしてキーワードとなるような単語を抽出するかが書かれている。|
+|[More train data issues](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data/discussion/228337)|データセット名とクリーニングされたラベル名の対応に対する質問．複数のクリーニングされたラベルが1つのデータセット名に対応してるじゃんって言われてる|
 
 ## Notebooks
 
