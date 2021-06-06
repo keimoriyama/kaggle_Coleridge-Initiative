@@ -43,8 +43,11 @@ train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labe
 
 epochs = 1
 
-model, loss = train_model(model, optimizer, train_dataloader, device)
-loss = val_model(model, train_dataloader, device)
+for epoch in epochs:
+    model, train_loss = train_model(model, optimizer, train_dataloader, device)
+    val_loss = val_model(model, train_dataloader, device)
+    print(f"epoch:{epoch}")
+    print(f"train_loss:{train_loss}    val_loss:{val_loss}")
 
 torch.save(model.state_dict(), './model.pth')
 
