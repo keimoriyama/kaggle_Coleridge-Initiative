@@ -44,7 +44,7 @@ def collate_fn(batch):
 def prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx):
     dataset = sentence_datasets(tokenized_sentences, labels, tokenizer, tag_to_idx)
     train_index, test_index = train_test_split(range(int(len(dataset))), test_size = 0.3)
-    batch_size = 32
+    batch_size = 16
     train_dataset = Subset(dataset, train_index)
     train_dataloader = DataLoader(train_dataset, batch_size, shuffle = True, collate_fn= collate_fn)
     test_dataset = Subset(dataset, test_index)

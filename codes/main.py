@@ -25,8 +25,6 @@ else:
 
 df = pd.read_csv(BIO_LABEL)
 
-print(df)
-
 torch.manual_seed(42)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 tag_to_idx = { "B":1, "I": 2,"O": 3, "X": 4, "[CLS]": 5, "[SEP]": 6, "[PAD]": 0}
