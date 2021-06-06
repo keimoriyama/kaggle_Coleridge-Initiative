@@ -19,7 +19,7 @@ from utils import train_data_pairs, splits_sentence
 from data import prepare_dataloader
 
 if 'COLAB_GPU' in set(os.environ.keys()):
-  BIO_LABEL = "../../only_bio_labeled_dataset.csv"
+  BIO_LABEL = "/content/only_bio_labeled_dataset.csv"
 else:
   BIO_LABEL = "../input/only_bio_labeled_dataset.csv"
 
