@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 def train_data_pairs(df):
   train_data = []
@@ -11,7 +12,7 @@ def train_data_pairs(df):
       train_data.append((sentence, label))
   return train_data
 
-def splits_sentence(train_data):
+def splits_sentence(train_data, tokenizer):
   tokenized_sentences,labels = [], []
   for data in tqdm(zip(train_data), total = len(train_data)):
     sentence = data[0][0]
