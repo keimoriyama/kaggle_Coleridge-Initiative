@@ -43,7 +43,7 @@ epochs = 1
 
 for epoch in range(epochs):
     model, train_loss = train_model(model, optimizer, train_dataloader, device)
-    val_loss = val_model(model, train_dataloader, device)
+    val_loss = val_model(model,test_dataloader, device)
     print(f"epoch:{epoch+1}")
     print(f"train_loss:{train_loss}    val_loss:{val_loss}")
 

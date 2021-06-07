@@ -104,7 +104,7 @@ def get_model(tag_to_idx, device):
 
 
 def train_model(model, optimizer, train_dataloader, device):
-    train_loss, test_loss = [], []
+    train_loss = []
     model.train()
     for sentence, label, mask in train_dataloader:
         optimizer.zero_grad()
@@ -120,11 +120,14 @@ def train_model(model, optimizer, train_dataloader, device):
 
 def val_model(model, test_dataloader, device):
     model.eval()
+    test_loss = []
     for sentence, label, mask in test_dataloader:
         with torch.no_grad():
             sentence = sentence.to(device)
             tags = label.to(device)
             masks = mask.to(device)
-            loss = model(sentence, masks, tags)['loss']    
+            loss = model(sentence, masks, tags)    
+            loss = torch.mean(loss)
+            test_loss.append(loss.item())
     return sum(test_loss)/len(test_loss)
 
