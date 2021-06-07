@@ -75,4 +75,4 @@ for json_file in tqdm(train_fiels,total=len(train_fiels)):
                     df_t = df_t.append(t)
                     data = []
 
-df_t.to_csv("train_data_for_bert.csv", index = False)
+df_t.to_csv("../input/data_for_bert.csv", index = False)

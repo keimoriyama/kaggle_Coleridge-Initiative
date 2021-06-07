@@ -20,15 +20,13 @@ class sentence_datasets(Dataset):
     def __getitem__(self, index):
         sentence = self.sentences[index]
         label = self.labels[index]
-        inputs = self.tokenizer(sentence, None,
-                return_tensors='pt')
-        ids = inputs['input_ids']
-        mask = inputs['attention_mask']
-        # print(label, tokenizer.convert_ids_to_tokens(ids.squeeze(0)))
+        inputs = self.tokenizer.convert_tokens_to_ids(sentence.split())
+        inputs = torch.tensor(inputs, dtype = torch.long).unsqueeze(0)
+        mask = torch.ones(1,inputs.size(1), dtype = torch.long)
         label = [self.bio2idx[x] for x in label]
-        label = torch.tensor(label, dtype = torch.long).unsqueeze(0)
-        # print(ids.size(), label.size())
-        return {'ids':ids, 'mask':mask, 'tags': label}
+        label = torch.tensor(label, dtype=torch.long).unsqueeze(0)
+        print(inputs.size(),mask.size(), label.size())
+        return {'ids':inputs, 'mask':mask, 'tags': label}
 
 def collate_fn(batch):
     sent, label, mask = [], [], []
