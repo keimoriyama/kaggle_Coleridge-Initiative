@@ -113,7 +113,7 @@ def train_model(model, optimizer, train_dataloader, device):
         masks = mask.to(device)
         output = model(sentence, masks, tags)
         loss = torch.mean(output)
-        train_loss.append(loss.item)
+        train_loss.append(loss.item())
         loss.backward()
         optimizer.step()
     return model, sum(train_loss)/len(train_loss)
