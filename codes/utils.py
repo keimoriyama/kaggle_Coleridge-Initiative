@@ -1,5 +1,13 @@
 import numpy as np
 from tqdm import tqdm
+import re
+import string
+
+def clean_text(txt):
+    text = re.sub("\s+", " ", txt)
+    text = "".join([k for k in text if k not in string.punctuation])
+    text = re.sub('[^A-Za-z0-9]+', ' ', str(txt).lower())
+    return text
 
 def train_data_pairs(df):
   train_data = []
