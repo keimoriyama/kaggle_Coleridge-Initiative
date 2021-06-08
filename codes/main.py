@@ -19,9 +19,11 @@ from utils import train_data_pairs, splits_sentence
 from data import prepare_dataloader
 
 if 'COLAB_GPU' in set(os.environ.keys()):
-  BIO_LABEL = "/content/data_for_bert.csv"
+    BIO_LABEL = "/content/data_for_bert.csv"
+elif "KAGGLE_URL_BASE" in set(os.environ.keys()):
+    BIO_LABEL = "../input/train_dataset_coleridge/data_for_bert.csv"
 else:
-  BIO_LABEL = "../input/data_for_bert.csv"
+    BIO_LABEL = "../input/data_for_bert.csv"
 
 df = pd.read_csv(BIO_LABEL)
 
