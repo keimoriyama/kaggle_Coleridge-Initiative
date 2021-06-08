@@ -99,8 +99,8 @@ def get_model(tag_to_idx, device):
     model_name = 'bert-base-uncased'
     config = BertConfig.from_pretrained(model_name, num_labels = len(tag_to_idx))
     model = BertForTokenClassification.from_pretrained(model_name, config=config)
-    for param in model.parameters():
-        param.requires_grad = False
+    #for param in model.parameters():
+    #    param.requires_grad = False
     optimizer = AdamW(model.parameters(), lr=1e-3)
     ner_model = BERT_ner(model, len(tag_to_idx)).to(device)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size= 30)
@@ -116,9 +116,8 @@ def train_model(model, optimizer, train_dataloader, device, scheduler = None):
         tags = label.to(device)
         masks = mask.to(device)
         loss = model(sentence, masks, tags)
-        # print(output)
-        #loss = torch.mean(output)
         train_loss.append(loss.item())
+        print(loss.item(), sum(train_loss))
         loss.backward()
         optimizer.step()
         if scheduler:
@@ -133,7 +132,7 @@ def val_model(model, test_dataloader, device):
             sentence = sentence.to(device)
             tags = label.to(device)
             masks = mask.to(device)
-            loss = model(sentence, masks, tags)    
+            loss = model(sentence, masks, tags)
             #loss = torch.mean(loss)
             test_loss.append(loss.item())
     return sum(test_loss)/len(test_loss)

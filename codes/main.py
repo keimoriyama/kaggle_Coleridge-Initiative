@@ -34,7 +34,7 @@ model, optimizer, scheduler = get_model(tag_to_idx, device)
 
 train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, batch_size= 32, debug = False)
 
-epochs = 100
+epochs = 20
 for epoch in range(epochs):
     start = time.time()
     model, train_loss = train_model(model, optimizer, train_dataloader, device, scheduler=scheduler)
