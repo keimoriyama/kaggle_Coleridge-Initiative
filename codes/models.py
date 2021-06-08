@@ -62,7 +62,7 @@ class BERT_ner(nn.Module):
         score = self._compute_score(logits, labels, masks)
         norm = self._compute_normalizer(logits, masks)
         score = score-norm
-        return score
+        return score.sum()/masks.float().sum()
 
     def decode(self, sentence, mask = None):
         output = self.model(sentence).logits
@@ -109,10 +109,11 @@ def train_model(model, optimizer, train_dataloader, device):
     for sentence, label, mask in train_dataloader:
         optimizer.zero_grad()
         sentence = sentence.to(device)
-        tags =label.to(device)
+        tags = label.to(device)
         masks = mask.to(device)
-        output = model(sentence, masks, tags)
-        loss = torch.mean(output)
+        loss = model(sentence, masks, tags)
+        # print(output)
+        #loss = torch.mean(output)
         train_loss.append(loss.item())
         loss.backward()
         optimizer.step()
@@ -127,7 +128,7 @@ def val_model(model, test_dataloader, device):
             tags = label.to(device)
             masks = mask.to(device)
             loss = model(sentence, masks, tags)    
-            loss = torch.mean(loss)
+            #loss = torch.mean(loss)
             test_loss.append(loss.item())
     return sum(test_loss)/len(test_loss)
 

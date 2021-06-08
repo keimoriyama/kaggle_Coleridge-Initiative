@@ -39,7 +39,7 @@ model, optimizer = get_model(tag_to_idx, device)
 
 train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx)
 
-epochs = 3
+epochs = 10
 for epoch in range(epochs):
     model, train_loss = train_model(model, optimizer, train_dataloader, device)
     val_loss = val_model(model,test_dataloader, device)
