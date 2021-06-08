@@ -39,14 +39,12 @@ model, optimizer = get_model(tag_to_idx, device)
 
 train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx)
 
-epochs = 1
-
+epochs = 3
 for epoch in range(epochs):
     model, train_loss = train_model(model, optimizer, train_dataloader, device)
     val_loss = val_model(model,test_dataloader, device)
     print(f"epoch:{epoch+1}")
     print(f"train_loss:{train_loss}    val_loss:{val_loss}")
-
 torch.save(model.state_dict(), './model.pth')
 
 model.load_state_dict(torch.load('./model.pth'))
@@ -63,7 +61,10 @@ model.eval()
 with torch.no_grad():
   tags = model.decode(input)
 
+print(tags)
 idx_to_tag = {v: k for k, v in tag_to_idx.items()}
 
-predict = [idx_to_tag[x.item()] for x in ans.squeeze(0)]
+predict = [idx_to_tag[x] for x in tags]
+
+print(predict)
 
