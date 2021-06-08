@@ -37,14 +37,14 @@ tokenized_sentences, labels = splits_sentence(train_data, tokenizer)
 
 model, optimizer = get_model(tag_to_idx, device)
 
-train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx)
+train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, debug = True)
 
 epochs = 10
 for epoch in range(epochs):
     model, train_loss = train_model(model, optimizer, train_dataloader, device)
     val_loss = val_model(model,test_dataloader, device)
     print(f"epoch:{epoch+1}")
-    print(f"train_loss:{train_loss}    val_loss:{val_loss}")
+    print("train_loss:{}    val_loss:{}".format(train_loss, val_loss))
 torch.save(model.state_dict(), './model.pth')
 
 model.load_state_dict(torch.load('./model.pth'))

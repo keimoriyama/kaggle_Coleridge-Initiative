@@ -39,9 +39,12 @@ def collate_fn(batch):
     mask = torch.nn.utils.rnn.pad_sequence(mask)
     return sent, label, mask
 
-def prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx):
+def prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, debug=False):
     dataset = sentence_datasets(tokenized_sentences, labels, tokenizer, tag_to_idx)
-    train_index, test_index = train_test_split(range(int(len(dataset))), test_size = 0.3)
+    if debug:
+        train_index, test_index = train_test_split(range(int(len(dataset)*0.001)), test_size = 0.2)
+    else:
+        train_index, test_index = train_test_split(range(int(len(dataset))), test_size = 0.2)
     batch_size = 16
     train_dataset = Subset(dataset, train_index)
     train_dataloader = DataLoader(train_dataset, batch_size, shuffle = True, collate_fn= collate_fn)
