@@ -52,8 +52,8 @@ torch.save(model.state_dict(), './model.pth')
 model.load_state_dict(torch.load('./model.pth'))
 
 d = df.iloc[1]
-sentence = d['sentence']
-label = d['BIO_label']
+sentence = d['string']
+label = d['label']
 
 input = tokenizer.encode(sentence)
 input = torch.tensor(input, dtype = torch.long)
