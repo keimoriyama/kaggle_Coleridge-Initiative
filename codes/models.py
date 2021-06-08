@@ -117,7 +117,7 @@ def train_model(model, optimizer, train_dataloader, device, scheduler = None):
         masks = mask.to(device)
         loss = model(sentence, masks, tags)
         train_loss.append(loss.item())
-        print(loss.item(), sum(train_loss))
+        # print(loss.item(), sum(train_loss))
         loss.backward()
         optimizer.step()
         if scheduler:
