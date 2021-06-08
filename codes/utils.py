@@ -2,6 +2,28 @@ import numpy as np
 from tqdm import tqdm
 import re
 import string
+import time
+
+def get_time(start, end):
+    t = end - start
+    h = 0
+    m = 0
+    s = 0
+    while t >= 3600:
+      h += 1
+      t -= 3600
+    while t >= 60:
+      m += 1
+      t -= 60
+    s = int(t)
+    time = ""
+    if h != 0:
+      time += str(h) + "h "
+    if m != 0:
+      time += str(m) + "min "
+    if s != 0:
+      time += str(s) + "sec"
+    return time
 
 def clean_text(txt):
     text = re.sub("\s+", " ", txt)

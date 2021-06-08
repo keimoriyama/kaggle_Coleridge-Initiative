@@ -1,3 +1,4 @@
 coleridgeinitiative-data
 input/*
 codes/*.pth
+*.pyc
