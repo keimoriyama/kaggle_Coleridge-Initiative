@@ -27,7 +27,7 @@ df = pd.read_csv(BIO_LABEL)
 
 torch.manual_seed(42)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-tag_to_idx = { "B":1, "I": 2,"O": 3, "X": 4, "[CLS]": 5, "[SEP]": 6, "[PAD]": 0}
+tag_to_idx = { "B":1, "I": 2,"O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
 
@@ -35,13 +35,13 @@ train_data = train_data_pairs(df)
 
 tokenized_sentences, labels = splits_sentence(train_data, tokenizer)
 
-model, optimizer = get_model(tag_to_idx, device)
+model, optimizer, scheduler = get_model(tag_to_idx, device)
 
-train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, debug = True)
+train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, batch_size= 32, debug = False)
 
 epochs = 10
 for epoch in range(epochs):
-    model, train_loss = train_model(model, optimizer, train_dataloader, device)
+    model, train_loss = train_model(model, optimizer, train_dataloader, device, scheduler=scheduler)
     val_loss = val_model(model,test_dataloader, device)
     print(f"epoch:{epoch+1}")
     print("train_loss:{}    val_loss:{}".format(train_loss, val_loss))

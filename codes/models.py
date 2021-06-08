@@ -27,6 +27,7 @@ class BERT_ner(nn.Module):
       score = self.start_trainsitions[tags[0]]
       score += output[0, torch.arange(batch_size), tags[0]]
       for i in range(1, seq_len):
+          # print(mask[i])
           score += self.transitions[tags[i-1], tags[i]]*mask[i]
           score += output[i, torch.arange(batch_size), tags[i]]*mask[i]
 
@@ -98,12 +99,15 @@ def get_model(tag_to_idx, device):
     model_name = 'bert-base-uncased'
     config = BertConfig.from_pretrained(model_name, num_labels = len(tag_to_idx))
     model = BertForTokenClassification.from_pretrained(model_name, config=config)
-    optimizer = AdamW(model.parameters(), lr = 5e-5)
+    for param in model.parameters():
+        param.requires_grad = False
+    optimizer = AdamW(model.parameters(), lr=1e-3)
     ner_model = BERT_ner(model, len(tag_to_idx)).to(device)
-    return ner_model, optimizer
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size= 30)
+    return ner_model, optimizer, scheduler
 
 
-def train_model(model, optimizer, train_dataloader, device):
+def train_model(model, optimizer, train_dataloader, device, scheduler = None):
     train_loss = []
     model.train()
     for sentence, label, mask in train_dataloader:
@@ -117,6 +121,8 @@ def train_model(model, optimizer, train_dataloader, device):
         train_loss.append(loss.item())
         loss.backward()
         optimizer.step()
+        if scheduler:
+            scheduler.step()
     return model, sum(train_loss)/len(train_loss)
 
 def val_model(model, test_dataloader, device):

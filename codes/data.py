@@ -7,6 +7,8 @@ from torch.utils.data.dataset import Subset
 
 from sklearn.model_selection import train_test_split
 
+import os
+
 class sentence_datasets(Dataset):
     def __init__(self, sentences, labels, tokenizer, bio2idx):
         self.sentences = sentences
@@ -39,15 +41,14 @@ def collate_fn(batch):
     mask = torch.nn.utils.rnn.pad_sequence(mask)
     return sent, label, mask
 
-def prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, debug=False):
+def prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, batch_size, debug=False):
     dataset = sentence_datasets(tokenized_sentences, labels, tokenizer, tag_to_idx)
     if debug:
         train_index, test_index = train_test_split(range(int(len(dataset)*0.001)), test_size = 0.2)
     else:
         train_index, test_index = train_test_split(range(int(len(dataset))), test_size = 0.2)
-    batch_size = 16
     train_dataset = Subset(dataset, train_index)
-    train_dataloader = DataLoader(train_dataset, batch_size, shuffle = True, collate_fn= collate_fn)
+    train_dataloader = DataLoader(train_dataset, batch_size, shuffle=True, collate_fn=collate_fn)
     test_dataset = Subset(dataset, test_index)
     test_dataloader = DataLoader(test_dataset, batch_size, shuffle = False, collate_fn= collate_fn)
     return train_dataloader, test_dataloader
