@@ -27,7 +27,7 @@ class sentence_datasets(Dataset):
         mask = torch.ones(1,inputs.size(1), dtype = torch.long)
         label = [self.bio2idx[x] for x in label]
         label = torch.tensor(label, dtype=torch.long).unsqueeze(0)
-        #print(inputs.size(),mask.size(), label.size())
+        # print(inputs.size(),mask.size(), label.size())
         return {'ids':inputs, 'mask':mask, 'tags': label}
 
 def collate_fn(batch):

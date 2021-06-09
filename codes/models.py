@@ -4,7 +4,7 @@ import torch.nn as nn
 
 from tqdm import tqdm
 
-from transformers import BertTokenizer, BertConfig, BertForTokenClassification
+from transformers import BertTokenizer, BertConfig, BertForTokenClassification, BertModel
 from transformers import AdamW
 
 class BERT_ner(nn.Module):
@@ -22,20 +22,19 @@ class BERT_ner(nn.Module):
         nn.init.uniform(self.trainsitions, -0.1,0.1)
 
     def _compute_score(self, output, tags, mask):
-      seq_len, batch_size = tags.size()
+        seq_len, batch_size = tags.size()
+        # print(output.size())
+        score = self.start_trainsitions[tags[0]]
+        score += output[0, torch.arange(batch_size), tags[0]]
+        for i in range(1, seq_len):
+            score += self.transitions[tags[i-1], tags[i]]*mask[i]
+            score += output[i, torch.arange(batch_size), tags[i]]*mask[i]
 
-      score = self.start_trainsitions[tags[0]]
-      score += output[0, torch.arange(batch_size), tags[0]]
-      for i in range(1, seq_len):
-          # print(mask[i])
-          score += self.transitions[tags[i-1], tags[i]]*mask[i]
-          score += output[i, torch.arange(batch_size), tags[i]]*mask[i]
+        seq_ends = mask.long().sum(dim=0) - 1
+        last_tags = tags[seq_ends, torch.arange(batch_size)]
+        score += self.end_transitinos[last_tags]
 
-      seq_ends = mask.long().sum(dim=0) - 1
-      last_tags = tags[seq_ends, torch.arange(batch_size)]
-      score += self.end_transitinos[last_tags]
-
-      return score
+        return score
 
     def _compute_normalizer(self, output, masks):
         seq_len = output.size(0)
@@ -56,14 +55,13 @@ class BERT_ner(nn.Module):
         return torch.logsumexp(score, dim = 1)
 
     def forward(self, sentence, masks, labels):
-        output = self.model(sentence, masks, labels = labels)
-        # print(output)
+        output = self.model(sentence, masks)
         logits = output.logits
-        # print(logits.size())
         score = self._compute_score(logits, labels, masks)
         norm = self._compute_normalizer(logits, masks)
+        # print(score, norm)
         score = score-norm
-        return score.sum()/masks.float().sum()
+        return score.mean()
 
     def decode(self, sentence, mask = None):
         output = self.model(sentence).logits
@@ -97,8 +95,11 @@ class BERT_ner(nn.Module):
 
 def get_model(tag_to_idx, device):
     model_name = 'bert-base-uncased'
-    config = BertConfig.from_pretrained(model_name, num_labels = len(tag_to_idx))
-    model = BertForTokenClassification.from_pretrained(model_name, config=config)
+    config = BertConfig.from_pretrained(model_name,
+                                        num_hidden_layers = 1,
+                                        num_labels = len(tag_to_idx))
+    model = BertForTokenClassification(config)
+    print(model)
     #for param in model.parameters():
     #    param.requires_grad = False
     optimizer = AdamW(model.parameters(), lr=1e-3)
@@ -116,11 +117,12 @@ def train_model(model, optimizer, train_dataloader, device, scheduler = None):
         tags = label.to(device)
         masks = mask.to(device)
         loss = model(sentence, masks, tags)
+        # print(sentence, masks)
         train_loss.append(loss.item())
         # print(loss.item(), sum(train_loss))
         loss.backward()
         optimizer.step()
-        if scheduler:
+        if scheduler is not None:
             scheduler.step()
     return model, sum(train_loss)/len(train_loss)
 

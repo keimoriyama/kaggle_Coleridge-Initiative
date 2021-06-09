@@ -32,7 +32,9 @@ tokenized_sentences, labels = splits_sentence(train_data, tokenizer)
 
 model, optimizer, scheduler = get_model(tag_to_idx, device)
 
-train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, batch_size= 32, debug = False)
+# print(model)
+
+train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, batch_size= 2, debug = False)
 
 epochs = 20
 for epoch in range(epochs):
