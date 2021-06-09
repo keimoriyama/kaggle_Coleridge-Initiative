@@ -2,3 +2,4 @@ coleridgeinitiative-data
 input/*
 codes/*.pth
 *.pyc
+codes/__pycache__
