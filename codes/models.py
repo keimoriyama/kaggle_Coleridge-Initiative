@@ -15,25 +15,28 @@ class BERT_ner(nn.Module):
         self.start_trainsitions = nn.Parameter(torch.empty(self.num_tags))
         self.end_transitinos = nn.Parameter(torch.empty(self.num_tags))
         self.transitions = nn.Parameter(torch.empty(self.num_tags, self.num_tags))
+        self.reset_params()
 
     def reset_params(self):
-        nn.init.uniform(self.start_trainsitions, -0.1,0.1)
-        nn.init.uniform(self.end_trainsitions, -0.1,0.1)
-        nn.init.uniform(self.trainsitions, -0.1,0.1)
+        nn.init.uniform(self.start_trainsitions, -0.1, 0.1)
+        nn.init.uniform(self.end_transitinos, -0.1,0.1)
+        nn.init.uniform(self.transitions, -0.1,0.1)
 
     def _compute_score(self, output, tags, mask):
         seq_len, batch_size = tags.size()
         # print(output.size())
         score = self.start_trainsitions[tags[0]]
-        score += output[0, torch.arange(batch_size), tags[0]]
+        score = score + output[0, torch.arange(batch_size), tags[0]]
         for i in range(1, seq_len):
-            score += self.transitions[tags[i-1], tags[i]]*mask[i]
-            score += output[i, torch.arange(batch_size), tags[i]]*mask[i]
+            # print(self.transitions[tags[i-1], tags[i]]*mask[i])
+            score = score + self.transitions[tags[i-1], tags[i]]*mask[i]
+            # print(output[i, torch.arange(batch_size), tags[i]]*mask[i])
+            score = score + output[i, torch.arange(batch_size), tags[i]]*mask[i]
 
+        #print(score)
         seq_ends = mask.long().sum(dim=0) - 1
         last_tags = tags[seq_ends, torch.arange(batch_size)]
-        score += self.end_transitinos[last_tags]
-
+        score = score + self.end_transitinos[last_tags]
         return score
 
     def _compute_normalizer(self, output, masks):
@@ -50,7 +53,7 @@ class BERT_ner(nn.Module):
             # print(type(masks[i]), type(next_score), type(score))
             score = torch.where(masks[i].unsqueeze(1), next_score, score)
 
-            score += self.end_transitinos
+            score = score + self.end_transitinos
 
         return torch.logsumexp(score, dim = 1)
 
@@ -59,8 +62,9 @@ class BERT_ner(nn.Module):
         logits = output.logits
         score = self._compute_score(logits, labels, masks)
         norm = self._compute_normalizer(logits, masks)
-        # print(score, norm)
+        #print(score, norm)
         score = score-norm
+        #print(score)
         return score.mean()
 
     def decode(self, sentence, mask = None):

@@ -36,6 +36,11 @@ model, optimizer, scheduler = get_model(tag_to_idx, device)
 
 train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, labels, tokenizer, tag_to_idx, batch_size= 32, debug = False)
 
+d = df.iloc[0]
+sample_sentence= d['string']
+ans_label = d['label']
+idx_to_tag = {v: k for k, v in tag_to_idx.items()}
+
 epochs = 20
 for epoch in range(epochs):
     start = time.time()
@@ -45,26 +50,24 @@ for epoch in range(epochs):
     elapsed_time = get_time(start, end)
     print(f"epoch:{epoch+1}")
     print("time: {} train_loss:{}    val_loss:{}".format(elapsed_time, train_loss, val_loss))
+
+    with torch.no_grad():
+      tags = model.decode(sample_sentence)
+    print('input sentence: ', sample_sentence)
+    print("ans: ", tags)
+
+    predict = [idx_to_tag[x] for x in tags]
+
+    print("predict: ", predict)
+
 torch.save(model.state_dict(), './model.pth')
 
 model.load_state_dict(torch.load('./model.pth'))
 
-d = df.iloc[1]
-sentence = d['string']
-label = d['label']
 
 input = tokenizer.encode(sentence)
 input = torch.tensor(input, dtype = torch.long)
 input = input.unsqueeze(0).to(device)
 
 model.eval()
-with torch.no_grad():
-  tags = model.decode(input)
-
-print(tags)
-idx_to_tag = {v: k for k, v in tag_to_idx.items()}
-
-predict = [idx_to_tag[x] for x in tags]
-
-print(predict)
 
