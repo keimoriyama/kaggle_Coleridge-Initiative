@@ -41,6 +41,10 @@ sample_sentence= d['string']
 ans_label = d['label']
 idx_to_tag = {v: k for k, v in tag_to_idx.items()}
 
+input = tokenizer.encode(sample_sentence)
+input = torch.tensor(input, dtype = torch.long)
+model_input = input.unsqueeze(0).to(device)
+
 epochs = 20
 for epoch in range(epochs):
     start = time.time()
@@ -52,7 +56,7 @@ for epoch in range(epochs):
     print("time: {} train_loss:{}    val_loss:{}".format(elapsed_time, train_loss, val_loss))
 
     with torch.no_grad():
-      tags = model.decode(sample_sentence)
+      tags = model.decode(model_input)
     print('input sentence: ', sample_sentence)
     print("ans: ", tags)
 
@@ -65,9 +69,6 @@ torch.save(model.state_dict(), './model.pth')
 model.load_state_dict(torch.load('./model.pth'))
 
 
-input = tokenizer.encode(sentence)
-input = torch.tensor(input, dtype = torch.long)
-input = input.unsqueeze(0).to(device)
 
 model.eval()
 
