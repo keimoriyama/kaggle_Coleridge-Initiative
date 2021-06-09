@@ -18,9 +18,9 @@ class BERT_ner(nn.Module):
         self.reset_params()
 
     def reset_params(self):
-        nn.init.uniform(self.start_trainsitions, -0.1, 0.1)
-        nn.init.uniform(self.end_transitinos, -0.1,0.1)
-        nn.init.uniform(self.transitions, -0.1,0.1)
+        nn.init.uniform(self.start_trainsitions, -0.01, 0.01)
+        nn.init.uniform(self.end_transitinos, -0.01,0.01)
+        nn.init.uniform(self.transitions, -0.01,0.01)
 
     def _compute_score(self, output, tags, mask):
         seq_len, batch_size = tags.size()
@@ -35,7 +35,9 @@ class BERT_ner(nn.Module):
 
         #print(score)
         seq_ends = mask.long().sum(dim=0) - 1
+        # print(seq_ends)
         last_tags = tags[seq_ends, torch.arange(batch_size)]
+        # print(last_tags)
         score = score + self.end_transitinos[last_tags]
         return score
 
@@ -81,13 +83,15 @@ class BERT_ner(nn.Module):
         score = self.start_trainsitions + output[0]
         history = []
         for feat in output[1:]:
-            next_score = score+self.transitions + feat
+            next_score = score + self.transitions + feat
+            # print(next_score)
             next_score, indices = next_score.max(dim=1)
+            score = next_score
             history.append(indices)
         score += self.end_transitinos
         best_tag_list = []
-
-        _, best_last_tag = score.max(dim=1)
+        print(score)
+        _, best_last_tag = score.max(dim=0)
         best_tags = [best_last_tag.item()]
         for hist in reversed(history):
             best_last_tag = hist[best_tags[-1]]
@@ -100,7 +104,7 @@ class BERT_ner(nn.Module):
 def get_model(tag_to_idx, device):
     model_name = 'bert-base-uncased'
     config = BertConfig.from_pretrained(model_name,
-                                        num_hidden_layers = 3,
+                                        num_hidden_layers = 1,
                                         num_labels = len(tag_to_idx))
     model = BertForTokenClassification(config)
     print(model)
