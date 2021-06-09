@@ -53,7 +53,7 @@ class BERT_ner(nn.Module):
             # print(type(masks[i]), type(next_score), type(score))
             score = torch.where(masks[i].unsqueeze(1), next_score, score)
 
-            score = score + self.end_transitinos
+        score = score + self.end_transitinos
 
         return torch.logsumexp(score, dim = 1)
 
@@ -100,7 +100,7 @@ class BERT_ner(nn.Module):
 def get_model(tag_to_idx, device):
     model_name = 'bert-base-uncased'
     config = BertConfig.from_pretrained(model_name,
-                                        num_hidden_layers = 1,
+                                        num_hidden_layers = 3,
                                         num_labels = len(tag_to_idx))
     model = BertForTokenClassification(config)
     print(model)
