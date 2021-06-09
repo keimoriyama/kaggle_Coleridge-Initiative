@@ -48,14 +48,14 @@ model_input = input.unsqueeze(0).to(device)
 epochs = 20
 for epoch in range(epochs):
     start = time.time()
-    
+
     model, train_loss = train_model(model, optimizer, train_dataloader, device, scheduler=scheduler)
     val_loss = val_model(model,test_dataloader, device)
     end = time.time()
     elapsed_time = get_time(start, end)
     print(f"epoch:{epoch+1}")
     print("time: {} train_loss:{}    val_loss:{}".format(elapsed_time, train_loss, val_loss))
-    
+
 
     with torch.no_grad():
       tags = model.decode(model_input)

@@ -16,6 +16,8 @@ class BERT_ner(nn.Module):
         self.end_transitinos = nn.Parameter(torch.empty(self.num_tags))
         self.transitions = nn.Parameter(torch.empty(self.num_tags, self.num_tags))
         self.reset_params()
+        #self.transitions[0] = -100000
+        # print(self.transitions)
 
     def reset_params(self):
         nn.init.uniform(self.start_trainsitions, -0.01, 0.01)
@@ -32,6 +34,7 @@ class BERT_ner(nn.Module):
             score = score + self.transitions[tags[i-1], tags[i]]*mask[i]
             # print(output[i, torch.arange(batch_size), tags[i]]*mask[i])
             score = score + output[i, torch.arange(batch_size), tags[i]]*mask[i]
+            # print(score)
 
         #print(score)
         seq_ends = mask.long().sum(dim=0) - 1
@@ -54,6 +57,7 @@ class BERT_ner(nn.Module):
             next_score = torch.logsumexp(next_score, dim=1)
             # print(type(masks[i]), type(next_score), type(score))
             score = torch.where(masks[i].unsqueeze(1), next_score, score)
+            # print(score)
 
         score = score + self.end_transitinos
 
@@ -65,9 +69,10 @@ class BERT_ner(nn.Module):
         score = self._compute_score(logits, labels, masks)
         norm = self._compute_normalizer(logits, masks)
         #print(score, norm)
+        # print(self.transitions)
         score = score-norm
         #print(score)
-        return score.mean()
+        return score
 
     def decode(self, sentence, mask = None):
         output = self.model(sentence).logits
@@ -107,11 +112,12 @@ def get_model(tag_to_idx, device):
                                         num_hidden_layers = 1,
                                         num_labels = len(tag_to_idx))
     model = BertForTokenClassification(config)
-    print(model)
+    # print(model)
     #for param in model.parameters():
     #    param.requires_grad = False
-    optimizer = AdamW(model.parameters(), lr=1e-3)
+    optimizer = AdamW(model.parameters(), lr=5e-5)
     ner_model = BERT_ner(model, len(tag_to_idx)).to(device)
+    print(ner_model)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size= 30)
     return ner_model, optimizer, scheduler
 
@@ -126,6 +132,7 @@ def train_model(model, optimizer, train_dataloader, device, scheduler = None):
         masks = mask.to(device)
         loss = model(sentence, masks, tags)
         # print(sentence, masks)
+        loss = loss.sum()
         train_loss.append(loss.item())
         # print(loss.item(), sum(train_loss))
         loss.backward()
