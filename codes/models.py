@@ -32,12 +32,15 @@ class BERT_ner(nn.Module):
             pred = self.CRF.decode(hidden)
             return pred
 
-def get_model(tag_to_idx, device):
+def get_model(tag_to_idx, device, CFG):
     model_name = 'bert-base-uncased'
-    config = BertConfig.from_pretrained(model_name,
-                                        num_hidden_layers = 1,
+    if CFG['bert_type'] == "default":
+        model = BertForTokenClassification.from_pretrained(model_name)
+    else:
+        config = BertConfig.from_pretrained(model_name,
+                                        num_hidden_layers=hidden_layers,
                                         num_labels = len(tag_to_idx))
-    model = BertForTokenClassification(config)
+        model = BertForTokenClassification(config)
     # print(model)
     #for param in model.parameters():
     #    param.requires_grad = False

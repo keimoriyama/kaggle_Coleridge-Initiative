@@ -24,27 +24,35 @@ torch.manual_seed(42)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 tag_to_idx = { "B":1, "I": 2,"O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 
+CFG = {
+        "batch_size": 32,
+        "debug": True,
+        'hidden_layers': 1,
+        "epoch":20,
+        "bert_type": "default"
+    }
+
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
 
 train_data = train_data_pairs(df)
 
 tokenized_sentences, labels = splits_sentence(train_data, tokenizer)
 
-model, optimizer, scheduler = get_model(tag_to_idx, device)
+model, optimizer, scheduler = get_model(tag_to_idx, device, CFG)
 
-train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences, 
-                                                        labels, 
-                                                        tokenizer, 
+train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences,
+                                                        labels,
+                                                        tokenizer,
                                                         tag_to_idx,
-                                                        batch_size= 32, 
-                                                        debug = False)
+                                                        batch_size= CFG['batch_size'],
+                                                        debug = CFG['debug'])
 
 d = df.iloc[5]
 sample_sentence= d['string']
 ans_label = d['label']
 idx_to_tag = {v: k for k, v in tag_to_idx.items()}
 
-epochs = 20
+epochs = CFG["epoch"]
 for epoch in range(epochs):
     start = time.time()
 
