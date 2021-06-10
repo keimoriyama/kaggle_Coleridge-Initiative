@@ -37,9 +37,9 @@ train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences,
                                                         tokenizer, 
                                                         tag_to_idx,
                                                         batch_size= 32, 
-                                                        debug = True)
+                                                        debug = False)
 
-d = df.iloc[0]
+d = df.iloc[5]
 sample_sentence= d['string']
 ans_label = d['label']
 idx_to_tag = {v: k for k, v in tag_to_idx.items()}
