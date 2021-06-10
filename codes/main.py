@@ -10,6 +10,7 @@ import time
 from models import get_model, train_model, val_model, predict_labels
 from utils import train_data_pairs, splits_sentence, get_time
 from data import prepare_dataloader
+from torchviz import make_dot
 
 if 'COLAB_GPU' in set(os.environ.keys()):
     BIO_LABEL = "/content/data_for_bert.csv"
@@ -37,13 +38,12 @@ train_dataloader, test_dataloader = prepare_dataloader(tokenized_sentences,
                                                         tokenizer, 
                                                         tag_to_idx,
                                                         batch_size= 32, 
-                                                        debug = False)
+                                                        debug = True)
 
 d = df.iloc[0]
 sample_sentence= d['string']
 ans_label = d['label']
 idx_to_tag = {v: k for k, v in tag_to_idx.items()}
-
 
 epochs = 20
 for epoch in range(epochs):
