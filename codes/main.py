@@ -10,7 +10,6 @@ import time
 from models import get_model, train_model, val_model, predict_labels
 from utils import train_data_pairs, splits_sentence, get_time
 from data import prepare_dataloader
-from torchviz import make_dot
 
 if 'COLAB_GPU' in set(os.environ.keys()):
     BIO_LABEL = "/content/data_for_bert.csv"
