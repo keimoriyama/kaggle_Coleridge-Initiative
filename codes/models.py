@@ -38,7 +38,7 @@ def get_model(tag_to_idx, device, CFG):
         model = BertForTokenClassification.from_pretrained(model_name)
     else:
         config = BertConfig.from_pretrained(model_name,
-                                        num_hidden_layers=hidden_layers,
+                                        num_hidden_layers=CFG['hidden_layers'],
                                         num_labels = len(tag_to_idx))
         model = BertForTokenClassification(config)
     # print(model)
