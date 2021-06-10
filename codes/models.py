@@ -82,8 +82,9 @@ def val_model(model, test_dataloader, device):
 
 def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     input = tokenizer.encode(sentence)
-    input = torch.tensor(input, dtype = torch.long)
+    input = torch.tensor(input, dtype=torch.long)
     model_input = input.unsqueeze(0).to(device)
+    # print(model_input)
     with torch.no_grad():
       tags = model(model_input)
     print('input sentence: ', sentence)

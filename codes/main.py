@@ -27,9 +27,9 @@ tag_to_idx = { "B":1, "I": 2,"O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 CFG = {
         "batch_size": 32,
         "debug": False,
-        'hidden_layers': 1,
+        'hidden_layers': 4,
         "epoch":20,
-        "bert_type": "default"
+        "bert_type": "custom"
     }
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
