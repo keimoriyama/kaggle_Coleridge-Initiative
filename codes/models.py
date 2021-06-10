@@ -15,6 +15,7 @@ class BERT_ner(nn.Module):
         self.start_trainsitions = nn.Parameter(torch.empty(self.num_tags))
         self.end_transitinos = nn.Parameter(torch.empty(self.num_tags))
         self.transitions = nn.Parameter(torch.empty(self.num_tags, self.num_tags))
+        self.hidden2tags = nn.Linear(768, self.num_tags)
         self.reset_params()
         #self.transitions[0] = -100000
         # print(self.transitions)
@@ -64,19 +65,24 @@ class BERT_ner(nn.Module):
         return torch.logsumexp(score, dim = 1)
 
     def forward(self, sentence, masks, labels):
-        output = self.model(sentence, masks)
-        logits = output.logits
-        score = self._compute_score(logits, labels, masks)
-        norm = self._compute_normalizer(logits, masks)
+        output = self.model(sentence, masks, output_hidden_states=True)
+        hidden = output.hidden_states[-1]
+        hidden = self.hidden2tags(hidden)
+        # print(self.hidden2tags(hidden).size())
+        # logits = output.logits
+        score = self._compute_score(hidden, labels, masks)
+        norm = self._compute_normalizer(hidden, masks)
         #print(score, norm)
         # print(self.transitions)
         score = score-norm
         #print(score)
         return score
 
-    def decode(self, sentence, mask = None):
-        output = self.model(sentence).logits
-        # print(output)
+    def decode(self, sentence, mask=None):
+        output = self.model(sentence, output_hidden_states=True)
+        # print(output.hidden_states)
+        output = output.hidden_states[-1]
+        output = self.hidden2tags(output)
         if mask is None:
             mask = output.new_ones(output.shape[:2],dtype=torch.uint8)
 
@@ -95,7 +101,6 @@ class BERT_ner(nn.Module):
             history.append(indices)
         score += self.end_transitinos
         best_tag_list = []
-        print(score)
         _, best_last_tag = score.max(dim=0)
         best_tags = [best_last_tag.item()]
         for hist in reversed(history):
@@ -132,7 +137,7 @@ def train_model(model, optimizer, train_dataloader, device, scheduler = None):
         masks = mask.to(device)
         loss = model(sentence, masks, tags)
         # print(sentence, masks)
-        loss = loss.sum()
+        loss = loss.mean()
         train_loss.append(loss.item())
         # print(loss.item(), sum(train_loss))
         loss.backward()
@@ -150,7 +155,19 @@ def val_model(model, test_dataloader, device):
             tags = label.to(device)
             masks = mask.to(device)
             loss = model(sentence, masks, tags)
+            loss = loss.mean()
             #loss = torch.mean(loss)
             test_loss.append(loss.item())
     return sum(test_loss)/len(test_loss)
+
+def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
+    input = tokenizer.encode(sentence)
+    input = torch.tensor(input, dtype = torch.long)
+    model_input = input.unsqueeze(0).to(device)
+    with torch.no_grad():
+      tags = model.decode(model_input)
+    print('input sentence: ', sentence)
+    print("ans: ", label)
+    predict = [idx2tag[x] for x in tags]
+    print("predict: ", predict)
 
