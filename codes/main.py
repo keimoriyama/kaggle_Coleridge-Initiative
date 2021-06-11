@@ -30,7 +30,7 @@ tag_to_idx = {"B": 1, "I": 2, "O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 
 CFG = {
     "batch_size": 32,
-    "debug": False,
+    "debug": True,
     'hidden_layers': 1,
     "epoch": 10,
     "bert_type": 1
@@ -79,10 +79,12 @@ for epoch in range(epochs):
     print(f"epoch:{epoch+1}")
     print("time: {} train_loss:{}    val_loss:{}".format(
         elapsed_time, train_loss, val_loss))
-    predict_labels(model, sample_sentence, ans_label, idx_to_tag, tokenizer,
+    predict = predict_labels(model, sample_sentence, ans_label, idx_to_tag, tokenizer,
                    device)
     mlflow.log_metric("train loss", train_loss, epoch+1)
     mlflow.log_metric("validation loss", val_loss, epoch+1)
+    mlflow.log_metric("input sentence", sample_sentence, epoch+1)
+    mlflow.log_metric("predicted label", predict, epoch+1)
 
     # mlflow.log_artifact(model, '/model')
 

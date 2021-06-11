@@ -12,6 +12,7 @@ from torchcrf import CRF
 
 import numpy as np
 
+import mlflow
 
 class BERT_ner(nn.Module):
     def __init__(self, model, num_tags, CRF):
@@ -104,3 +105,4 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     # print(tags.shape)
     predict = [idx2tag[x] for x in tags]
     print("predict: ", predict)
+    return predict
