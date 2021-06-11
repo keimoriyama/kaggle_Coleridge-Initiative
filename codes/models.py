@@ -26,8 +26,8 @@ class BERT_ner(nn.Module):
         hidden = self.hidden2tags(hidden)
         if labels is not None:
             masks = masks.type(torch.uint8)
-            loss = -self.CRF(F.log_softmax(hidden, 2),
-                             labels, masks, reduction='mean')
+            loss = -self.CRF(
+                F.log_softmax(hidden, 2), labels, masks, reduction='mean')
             return loss
         else:
             pred = self.CRF.decode(hidden)
@@ -36,12 +36,13 @@ class BERT_ner(nn.Module):
 
 def get_model(tag_to_idx, device, CFG):
     model_name = 'bert-base-uncased'
-    if CFG['bert_type'] == "default":
+    if CFG['bert_type'] == 1:
         model = BertForTokenClassification.from_pretrained(model_name)
     else:
-        config = BertConfig.from_pretrained(model_name,
-                                            num_hidden_layers=CFG['hidden_layers'],
-                                            num_labels=len(tag_to_idx))
+        config = BertConfig.from_pretrained(
+            model_name,
+            num_hidden_layers=CFG['hidden_layers'],
+            num_labels=len(tag_to_idx))
         model = BertForTokenClassification(config)
     # print(model)
     # for param in model.parameters():
@@ -68,7 +69,7 @@ def train_model(model, optimizer, train_dataloader, device, scheduler=None):
         optimizer.step()
         if scheduler is not None:
             scheduler.step()
-    return model, sum(train_loss)/len(train_loss)
+    return model, sum(train_loss) / len(train_loss)
 
 
 def val_model(model, test_dataloader, device):
@@ -81,7 +82,7 @@ def val_model(model, test_dataloader, device):
             masks = mask.to(device)
             loss = model(sentence, masks, tags)
             test_loss.append(loss.item())
-    return sum(test_loss)/len(test_loss)
+    return sum(test_loss) / len(test_loss)
 
 
 def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
