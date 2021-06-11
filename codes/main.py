@@ -5,11 +5,15 @@ import torch
 from transformers import BertTokenizer
 import time
 
+import mlflow
+
 # 自作モジュール
 from models import get_model, train_model, val_model, predict_labels
 from utils import train_data_pairs, splits_sentence, get_time
 from data import prepare_dataloader
 from predict import predict
+
+mlflow.start_run()
 
 if 'COLAB_GPU' in set(os.environ.keys()):
     BIO_LABEL = "/content/data_for_bert.csv"
@@ -27,10 +31,12 @@ tag_to_idx = {"B": 1, "I": 2, "O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 CFG = {
     "batch_size": 32,
     "debug": False,
-    'hidden_layers': 4,
+    'hidden_layers': 1,
     "epoch": 10,
-    "bert_type": 1
+    "bert_type": 0
 }
+
+mlflow.log_dict(CFG, "config.json")
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
                                           do_lower_case=False)
@@ -54,6 +60,9 @@ sample_sentence = d['string']
 ans_label = d['label']
 idx_to_tag = {v: k for k, v in tag_to_idx.items()}
 epochs = CFG["epoch"]
+
+all_train_loss, all_val_loss = [], []
+
 for epoch in range(epochs):
     start = time.time()
 
@@ -63,6 +72,8 @@ for epoch in range(epochs):
                                     device,
                                     scheduler=scheduler)
     val_loss = val_model(model, test_dataloader, device)
+    # all_train_loss.append(train_loss)
+    # all_val_loss.append(val_loss)
     end = time.time()
     elapsed_time = get_time(start, end)
     print(f"epoch:{epoch+1}")
@@ -70,14 +81,18 @@ for epoch in range(epochs):
         elapsed_time, train_loss, val_loss))
     predict_labels(model, sample_sentence, ans_label, idx_to_tag, tokenizer,
                    device)
+    mlflow.log_metric("train loss", train_loss, epoch)
+    mlflow.log_metric("validation loss", val_loss, epoch)
+
+    # mlflow.log_artifact(model, '/model')
 
 if CFG['bert_type'] == 0:
     torch.save(
         model.state_dict(),
-        './{}_model_{}_layers.pth'.format(CFG['bert_type'],
+        './model/model_{}_layers.pth'.format(
                                           CFG['hidden_layers']))
 else:
-    torch.save(model.state_dict(), './{}_model.pth'.format(CFG['bert_type']))
+    torch.save(model.state_dict(), './model/pretrained_model.pth')
 """
 model.load_state_dict(torch.load('./model.pth', map_location=device))
 
