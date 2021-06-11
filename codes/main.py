@@ -37,6 +37,8 @@ CFG = {
     "bert_type": 1
 }
 
+mlflow.set_tracking_uri("./mlruns")
+
 mlflow.log_dict(CFG, "config.json")
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
@@ -87,6 +89,7 @@ for epoch in range(epochs):
 
     # mlflow.log_artifact(model, '/model')
 
+mlflow.end_run()
 if CFG['bert_type'] == 0:
     torch.save(model.state_dict(),
                './model/model_{}_layers.pth'.format(CFG['hidden_layers']))

@@ -14,6 +14,7 @@ import numpy as np
 
 import mlflow
 
+
 class BERT_ner(nn.Module):
     def __init__(self, model, num_tags, CRF):
         super(BERT_ner, self).__init__()
