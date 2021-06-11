@@ -33,7 +33,7 @@ CFG = {
     "debug": False,
     'hidden_layers': 1,
     "epoch": 10,
-    "bert_type": 0
+    "bert_type": 1
 }
 
 mlflow.log_dict(CFG, "config.json")
@@ -81,8 +81,8 @@ for epoch in range(epochs):
         elapsed_time, train_loss, val_loss))
     predict_labels(model, sample_sentence, ans_label, idx_to_tag, tokenizer,
                    device)
-    mlflow.log_metric("train loss", train_loss, epoch)
-    mlflow.log_metric("validation loss", val_loss, epoch)
+    mlflow.log_metric("train loss", train_loss, epoch+1)
+    mlflow.log_metric("validation loss", val_loss, epoch+1)
 
     # mlflow.log_artifact(model, '/model')
 
