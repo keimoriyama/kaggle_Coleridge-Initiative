@@ -28,7 +28,7 @@ CFG = {
     "batch_size": 32,
     "debug": False,
     'hidden_layers': 4,
-    "epoch": 20,
+    "epoch": 10,
     "bert_type": 1
 }
 
