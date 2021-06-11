@@ -1,5 +1,6 @@
 coleridgeinitiative-data
 input/*
-codes/*.pth
+codes/model/*.pth
 *.pyc
 codes/__pycache__
+
