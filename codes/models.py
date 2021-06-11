@@ -81,8 +81,13 @@ def val_model(model, test_dataloader, device):
     return sum(test_loss)/len(test_loss)
 
 def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
-    input = tokenizer.encode(sentence)
+    sentence = sentence.split()
+    sentence.insert(0, "[CLS]")
+    sentence.append("[SEP]")
+    # print(sentence)
+    input = tokenizer.convert_tokens_to_ids(sentence)
     input = torch.tensor(input, dtype=torch.long)
+    # print(input)
     model_input = input.unsqueeze(0).to(device)
     # print(model_input)
     with torch.no_grad():
@@ -91,7 +96,7 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     print("ans: ", label)
     tags = np.array(tags)
     tags = np.squeeze(tags)
-    print(tags.shape)
+    # print(tags.shape)
     predict = [idx2tag[x] for x in tags]
     print("predict: ", predict)
 

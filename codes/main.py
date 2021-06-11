@@ -26,7 +26,7 @@ tag_to_idx = { "B":1, "I": 2,"O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 
 CFG = {
         "batch_size": 32,
-        "debug": False,
+        "debug": True,
         'hidden_layers': 4,
         "epoch":20,
         "bert_type": "custom"
