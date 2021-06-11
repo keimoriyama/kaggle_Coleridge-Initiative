@@ -12,6 +12,7 @@ from torchcrf import CRF
 
 import numpy as np
 
+
 class BERT_ner(nn.Module):
     def __init__(self, model, num_tags, CRF):
         super(BERT_ner, self).__init__()
@@ -19,18 +20,19 @@ class BERT_ner(nn.Module):
         self.hidden2tags = nn.Linear(768, num_tags)
         self.CRF = CRF(num_tags)
 
-
-    def forward(self, sentence, masks = None, labels = None):
+    def forward(self, sentence, masks=None, labels=None):
         output = self.model(sentence, masks, output_hidden_states=True)
         hidden = output.hidden_states[-1]
         hidden = self.hidden2tags(hidden)
         if labels is not None:
             masks = masks.type(torch.uint8)
-            loss = -self.CRF(F.log_softmax(hidden, 2), labels, masks, reduction='mean')
+            loss = -self.CRF(F.log_softmax(hidden, 2),
+                             labels, masks, reduction='mean')
             return loss
         else:
             pred = self.CRF.decode(hidden)
             return pred
+
 
 def get_model(tag_to_idx, device, CFG):
     model_name = 'bert-base-uncased'
@@ -38,20 +40,20 @@ def get_model(tag_to_idx, device, CFG):
         model = BertForTokenClassification.from_pretrained(model_name)
     else:
         config = BertConfig.from_pretrained(model_name,
-                                        num_hidden_layers=CFG['hidden_layers'],
-                                        num_labels = len(tag_to_idx))
+                                            num_hidden_layers=CFG['hidden_layers'],
+                                            num_labels=len(tag_to_idx))
         model = BertForTokenClassification(config)
     # print(model)
-    #for param in model.parameters():
+    # for param in model.parameters():
     #    param.requires_grad = False
     optimizer = AdamW(model.parameters(), lr=5e-5)
-    ner_model=BERT_ner(model, len(tag_to_idx), CRF).to(device)
+    ner_model = BERT_ner(model, len(tag_to_idx), CRF).to(device)
     print(ner_model)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size= 30)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30)
     return ner_model, optimizer, scheduler
 
 
-def train_model(model, optimizer, train_dataloader, device, scheduler = None):
+def train_model(model, optimizer, train_dataloader, device, scheduler=None):
     train_loss = []
     model.train()
     for sentence, label, mask in train_dataloader:
@@ -68,6 +70,7 @@ def train_model(model, optimizer, train_dataloader, device, scheduler = None):
             scheduler.step()
     return model, sum(train_loss)/len(train_loss)
 
+
 def val_model(model, test_dataloader, device):
     model.eval()
     test_loss = []
@@ -80,6 +83,7 @@ def val_model(model, test_dataloader, device):
             test_loss.append(loss.item())
     return sum(test_loss)/len(test_loss)
 
+
 def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     sentence = sentence.split()
     sentence.insert(0, "[CLS]")
@@ -91,7 +95,7 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     model_input = input.unsqueeze(0).to(device)
     # print(model_input)
     with torch.no_grad():
-      tags = model(model_input)
+        tags = model(model_input)
     print('input sentence: ', sentence)
     print("ans: ", label)
     tags = np.array(tags)
@@ -99,4 +103,3 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     # print(tags.shape)
     predict = [idx2tag[x] for x in tags]
     print("predict: ", predict)
-
