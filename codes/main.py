@@ -81,16 +81,14 @@ for epoch in range(epochs):
         elapsed_time, train_loss, val_loss))
     predict_labels(model, sample_sentence, ans_label, idx_to_tag, tokenizer,
                    device)
-    mlflow.log_metric("train loss", train_loss, epoch+1)
-    mlflow.log_metric("validation loss", val_loss, epoch+1)
+    mlflow.log_metric("train loss", train_loss, epoch + 1)
+    mlflow.log_metric("validation loss", val_loss, epoch + 1)
 
     # mlflow.log_artifact(model, '/model')
 
 if CFG['bert_type'] == 0:
-    torch.save(
-        model.state_dict(),
-        './model/model_{}_layers.pth'.format(
-                                          CFG['hidden_layers']))
+    torch.save(model.state_dict(),
+               './model/model_{}_layers.pth'.format(CFG['hidden_layers']))
 else:
     torch.save(model.state_dict(), './model/pretrained_model.pth')
 """
