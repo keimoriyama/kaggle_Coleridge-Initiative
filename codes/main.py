@@ -33,7 +33,8 @@ CFG = {
     "debug": False,
     'hidden_layers': 1,
     "epoch": 10,
-    "bert_type": 0
+    # 1が事前学習済みモデル
+    "bert_type": 1
 }
 
 mlflow.log_dict(CFG, "config.json")
