@@ -105,4 +105,3 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     # print(tags.shape)
     predict = [idx2tag[x] for x in tags]
     print("predict: ", predict)
-    return predict
