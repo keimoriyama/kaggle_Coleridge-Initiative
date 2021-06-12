@@ -31,10 +31,10 @@ tag_to_idx = {"B": 1, "I": 2, "O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 CFG = {
     "batch_size": 32,
     "debug": False,
-    'hidden_layers': 1,
+    'hidden_layers': 3,
     "epoch": 10,
     # 1が事前学習済みモデル
-    "bert_type": 1
+    "bert_type": 0
 }
 
 mlflow.set_tracking_uri("./mlruns")
