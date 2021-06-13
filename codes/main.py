@@ -41,7 +41,7 @@ mlflow.set_tracking_uri("./mlruns")
 
 mlflow.log_dict(CFG, "config.json")
 
-mlflow.log_param(CFG)
+mlflow.log_params(CFG)
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
                                           do_lower_case=False)
