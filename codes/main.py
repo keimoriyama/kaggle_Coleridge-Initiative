@@ -31,7 +31,7 @@ tag_to_idx = {"B": 1, "I": 2, "O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 CFG = {
     "batch_size": 32,
     "debug": False,
-    'hidden_layers': 4,
+    'hidden_layers': 5,
     "epoch": 10,
     # 1が事前学習済みモデル
     "bert_type": 0
@@ -40,6 +40,8 @@ CFG = {
 mlflow.set_tracking_uri("./mlruns")
 
 mlflow.log_dict(CFG, "config.json")
+
+mlflow.log_param(CFG)
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
                                           do_lower_case=False)
