@@ -6,6 +6,10 @@ import numpy as np
 
 import torch
 
+from models import get_model
+
+from utils import get_cfg, get_device, get_idx2tag, get_tag2idx, get_tokenizer
+
 MAX_LENGTH = 256
 
 
@@ -37,3 +41,14 @@ def predict(model, path, tokenizer, device, idx2tag):
                     for i in range(len(label)):
                         if label[i] == "B" or label[i] == "I":
                             print(label[i], sent[i])
+
+
+if __name__ == '__main__':
+    CFG = get_cfg()
+    tokenizer = get_tokenizer()
+    idx2tag = get_idx2tag()
+    tag_to_idx = get_tag2idx()
+    device = get_device()
+    model, _, _ = get_model(tag_to_idx, device, CFG)
+    path = '../input/test/'
+    predict(model, path, tokenizer, device, idx2tag)
