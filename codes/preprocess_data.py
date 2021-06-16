@@ -10,7 +10,8 @@ from more_itertools import chunked
 
 MAX_LENGTH = 256
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
+tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
+                                          do_lower_case=False)
 path = "../input/train.csv"
 
 df = pd.read_csv(path)
@@ -26,7 +27,7 @@ train_fiels = glob.glob("../input/train/*.json")
 
 data = []
 df_t = pd.DataFrame()
-for json_file in tqdm(train_fiels,total=len(train_fiels)):
+for json_file in tqdm(train_fiels, total=len(train_fiels)):
     # テキストの入手
     df = pd.read_json(json_file)
     texts = df['text']
@@ -48,31 +49,35 @@ for json_file in tqdm(train_fiels,total=len(train_fiels)):
                 label_index = 0
                 if dataset_label in sentence:
                     for i in range(len(tokenized_sentence)):
-                        if label_index == len(tokenized_dataset_label):
-                            find = True
-                        elif label_index < len(tokenized_dataset_label):
-                            if tokenized_sentence[i] == tokenized_dataset_label[label_index]:
-                                if label_index == 0:
-                                    bio.append("B")
-                                else:
-                                    bio.append("I")
-                                label_index += 1
+                        if (len(tokenized_dataset_label) == label_index):
+                            break
+                        if (tokenized_sentence[i] ==
+                                tokenized_dataset_label[label_index]):
+                            if label_index == 0:
+                                bio.append("B")
                             else:
-                                bio.append("O")
-                                label_index = 0
-                    while(len(bio) < len(tokenized_sentence)):
+                                bio.append("I")
+                            label_index += 1
+                        else:
+                            bio.append("O")
+                            label_index = 0
+                    while (len(bio) < len(tokenized_sentence)):
                         bio.append("O")
                     if len(tokenized_sentence) > MAX_LENGTH:
-                        for idx in range(0, len(tokenized_sentence), MAX_LENGTH):
+                        for idx in range(0, len(tokenized_sentence),
+                                         MAX_LENGTH):
                             split = tokenized_sentence[idx:idx + MAX_LENGTH]
-                            labels = bio[idx:idx+MAX_LENGTH]
+                            labels = bio[idx:idx + MAX_LENGTH]
                             if "B" in labels or "I" in labels:
-                                data.append([" ".join(split) , " ".join(labels)])
+                                data.append(
+                                    [" ".join(split), " ".join(labels)])
                     else:
-                        data.append([" ".join(tokenized_sentence)," ".join(bio)])
+                        data.append(
+                            [" ".join(tokenized_sentence), " ".join(bio)])
+                    # print(data)
                     t = pd.DataFrame(data, columns=['string', 'label'])
                     # print(t)
                     df_t = df_t.append(t)
                     data = []
 
-df_t.to_csv("../input/data_for_bert.csv", index = False)
+df_t.to_csv("../input/data_for_bert_only_first.csv", index=False)
