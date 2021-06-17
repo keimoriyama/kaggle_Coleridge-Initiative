@@ -24,7 +24,7 @@ def main():
     elif "KAGGLE_URL_BASE" in set(os.environ.keys()):
         BIO_LABEL = "/kaggle/input/train-dataset-coleridge/" + data_name
     else:
-        BIO_LABEL = "../input/" + dvata_name
+        BIO_LABEL = "../input/" + data_name
 
     df = pd.read_csv(BIO_LABEL)
 

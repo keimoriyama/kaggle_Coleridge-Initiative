@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/kei/Documents/kaggle_Coleridge-Initiative/codes/mlruns/0/570d08c99e114fec83b264d4ea760cd9/artifacts
+end_time: 1623924902569
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 570d08c99e114fec83b264d4ea760cd9
+run_uuid: 570d08c99e114fec83b264d4ea760cd9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1623924902517
+status: 3
+tags: []
+user_id: KEI
