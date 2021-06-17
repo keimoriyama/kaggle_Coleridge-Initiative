@@ -1,5 +1,6 @@
 import os
 import nltk
+
 nltk.download('punkt')
 from glob import glob
 import pandas as pd
@@ -54,6 +55,7 @@ if __name__ == '__main__':
     tag_to_idx = get_tag2idx()
     device = get_device()
     model, _, _ = get_model(tag_to_idx, device, CFG)
-    model.load_state_dict(torch.load('./model/model_{}_layers.pth'.format(CFG['hidden_layers']), map_location=device))
-    path = '../input/test/'
+    model.load_state_dict(
+        torch.load('./model/model_{}_layers.pth'.format(CFG['hidden_layers']),
+                   map_location=device))
     predict(model, path, tokenizer, device, idx2tag)
