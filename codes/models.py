@@ -24,8 +24,9 @@ class BERT_ner(nn.Module):
 
     def forward(self, sentence, masks=None, labels=None):
         output = self.model(sentence, masks, output_hidden_states=True)
-        hidden = output.hidden_states[-1]
-        hidden = self.hidden2tags(hidden)
+        # print(output)
+        hidden = output.logits
+        # hidden = self.hidden2tags(hidden)
         if labels is not None:
             masks = masks.type(torch.uint8)
             loss = -self.CRF(
