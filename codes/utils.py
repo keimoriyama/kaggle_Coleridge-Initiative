@@ -69,7 +69,7 @@ CFG = {
     "debug": False,
     'hidden_layers': 5,
     "epoch": 10,
-    # 1は事前学習済みモデル
+    # # 1は事前学習済みモデル
     "bert_type": 0
 }
 
