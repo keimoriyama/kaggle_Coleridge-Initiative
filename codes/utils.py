@@ -70,7 +70,7 @@ CFG = {
     'hidden_layers': 5,
     "epoch": 10,
     # 1は事前学習済みモデル
-    "bert_type": 0
+    "bert_type": 1
 }
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
