@@ -68,7 +68,7 @@ CFG = {
     "csv_name": "data_for_bert_only_first.csv",
     "batch_size": 32,
     "debug": False,
-    'hidden_layers': 5,
+    'hidden_layers': 3,
     "epoch": 10,
     # # 1は事前学習済みモデル
     "bert_type": 0

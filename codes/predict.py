@@ -58,4 +58,5 @@ if __name__ == '__main__':
     model.load_state_dict(
         torch.load('./model/model_{}_layers.pth'.format(CFG['hidden_layers']),
                    map_location=device))
+    path = '../input/test/'
     predict(model, path, tokenizer, device, idx2tag)
