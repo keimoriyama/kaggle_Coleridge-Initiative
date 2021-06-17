@@ -47,9 +47,6 @@ def get_model(tag_to_idx, device, CFG):
             num_hidden_layers=CFG['hidden_layers'],
             num_labels=len(tag_to_idx))
         model = BertForTokenClassification(config)
-    # print(model)
-    # for param in model.parameters():
-    #    param.requires_grad = False
     optimizer = AdamW(model.parameters(), lr=5e-5)
     ner_model = BERT_ner(model, len(tag_to_idx), CRF).to(device)
     print(ner_model)
