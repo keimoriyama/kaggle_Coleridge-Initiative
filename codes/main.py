@@ -17,13 +17,14 @@ def main():
 
     CFG = get_cfg()
     mlflow.start_run()
+    data_name = CFG['csv_name']
 
     if 'COLAB_GPU' in set(os.environ.keys()):
-        BIO_LABEL = "/content/data_for_bert.csv"
+        BIO_LABEL = "/content/" + data_name
     elif "KAGGLE_URL_BASE" in set(os.environ.keys()):
-        BIO_LABEL = "/kaggle/input/train-dataset-coleridge/data_for_bert.csv"
+        BIO_LABEL = "/kaggle/input/train-dataset-coleridge/" + data_name
     else:
-        BIO_LABEL = "../input/data_for_bert.csv"
+        BIO_LABEL = "../input/" + dvata_name
 
     df = pd.read_csv(BIO_LABEL)
 
