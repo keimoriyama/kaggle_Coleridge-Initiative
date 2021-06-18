@@ -1,0 +1,8 @@
+{
+  "csv_name": "data_for_bert_only_first.csv",
+  "batch_size": 32,
+  "debug": false,
+  "hidden_layers": 3,
+  "epoch": 10,
+  "bert_type": 1
+}
