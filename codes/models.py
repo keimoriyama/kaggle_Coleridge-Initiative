@@ -27,7 +27,7 @@ class BERT_ner(nn.Module):
             hidden = hidden[1:]
             labels = labels[1:]
             prediction_mask = prediction_mask[1:]
-            print(prediction_mask[0].all())
+            # print(prediction_mask[0].all())
             loss = -self.CRF(F.log_softmax(hidden, 2),
                              labels,
                              prediction_mask,

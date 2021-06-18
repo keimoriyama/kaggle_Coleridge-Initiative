@@ -21,7 +21,7 @@ class sentence_datasets(Dataset):
         return len(self.labels)
 
     def check_word(self, word):
-        return "[CLS]" == word or "[SEP]" == word or "##" in word
+        return "[CLS]" == word or "[SEP]" == word  #or "##" in word
 
     def __getitem__(self, index):
         sentence = self.sentences[index]
@@ -31,12 +31,17 @@ class sentence_datasets(Dataset):
             1 if not self.check_word(x) else 0 for x in sentence
         ]
         inputs = self.tokenizer.convert_tokens_to_ids(sentence)
-        inputs = torch.tensor(inputs, dtype=torch.long).unsqueeze(0)
-        attention_mask = torch.ones(1, inputs.size(1), dtype=torch.long)
+        inputs = torch.tensor(inputs, dtype=torch.long)
+        attention_mask = torch.ones(inputs.size(0), dtype=torch.long)
         label = [self.bio2idx[x] for x in label]
-        label = torch.tensor(label, dtype=torch.long).unsqueeze(0)
+        label = torch.tensor(label, dtype=torch.long)
         # print(inputs.size(),mask.size(), label.size())
         prediction_mask = torch.tensor(prediction_mask, dtype=torch.uint8)
+        """
+        if prediction_mask[1] == 0:
+            print(sentence)
+            print(label)
+        """
         return {
             'ids': inputs,
             'attention_mask': attention_mask,
@@ -48,10 +53,10 @@ class sentence_datasets(Dataset):
 def collate_fn(batch):
     sent, label, attention_mask, prediction_mask = [], [], [], []
     for elem in batch:
-        sent.append(elem['ids'].squeeze(0))
-        label.append(elem['tags'].squeeze(0))
-        attention_mask.append(elem['attention_mask'].squeeze(0))
-        prediction_mask.append(elem['prediction_mask'].squeeze(0))
+        sent.append(elem['ids'])
+        label.append(elem['tags'])
+        attention_mask.append(elem['attention_mask'])
+        prediction_mask.append(elem['prediction_mask'])
     sent = torch.nn.utils.rnn.pad_sequence(sent)
     label = torch.nn.utils.rnn.pad_sequence(label)
     attention_mask = torch.nn.utils.rnn.pad_sequence(attention_mask)
