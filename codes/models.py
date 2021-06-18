@@ -40,7 +40,8 @@ class BERT_ner(nn.Module):
 def get_model(tag_to_idx, device, CFG):
     model_name = 'bert-base-uncased'
     if CFG['bert_type'] == 1:
-        model = BertForTokenClassification.from_pretrained(model_name)
+        model = BertForTokenClassification.from_pretrained(
+            model_name, num_labels=len(tag_to_idx))
     else:
         config = BertConfig.from_pretrained(
             model_name,
