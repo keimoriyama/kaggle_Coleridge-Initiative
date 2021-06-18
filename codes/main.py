@@ -87,12 +87,9 @@ def main():
                    './model/model_{}_layers.pth'.format(CFG['hidden_layers']))
     else:
         torch.save(model.state_dict(), './model/pretrained_model.pth')
-    """
-    model.load_state_dict(torch.load('./model.pth', map_location=device))
 
     path = '../input/test/'
     predict(model, path, tokenizer, device, idx_to_tag)
-    """
 
 
 if __name__ == '__main__':
