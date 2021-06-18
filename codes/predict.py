@@ -1,7 +1,7 @@
 import os
 import nltk
 
-nltk.download('punkt')
+# nltk.download('punkt')
 from glob import glob
 import pandas as pd
 from nltk.tokenize import sent_tokenize
