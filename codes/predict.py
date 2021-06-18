@@ -30,14 +30,14 @@ def predict(model, path, tokenizer, device, idx2tag):
                                   return_token_type_ids=False,
                                   return_length=True,
                                   return_tensors="pt")
-                length = token['length']
-                tensor = token['input_ids']
+                tensor = token['input_ids'][:, 1:]
+                # print(tensor)
                 tensor = tensor.to(device)
                 with torch.no_grad():
                     label = model(tensor)
                 label = np.array(label)
-                label = np.squeeze(label)
-                # print(label)
+                label = np.squeeze(label, 1)
+                # print(label.shape)
                 label = [idx2tag[x] for x in label]
                 if 'B' in label or 'I' in label:
                     sent = tokenizer.convert_ids_to_tokens(tensor.squeeze(0))
