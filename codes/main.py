@@ -23,8 +23,10 @@ def main():
         BIO_LABEL = "/content/" + data_name
     elif "KAGGLE_URL_BASE" in set(os.environ.keys()):
         BIO_LABEL = "/kaggle/input/train-dataset-coleridge/" + data_name
+        test_path = "../input/coleridgeinitiative-show-us-the-data/test/"
     else:
         BIO_LABEL = "../input/" + data_name
+        test_path = '../input/test/'
 
     df = pd.read_csv(BIO_LABEL)
 
@@ -88,8 +90,7 @@ def main():
     else:
         torch.save(model.state_dict(), './model/pretrained_model.pth')
 
-    path = '../input/test/'
-    predict(model, path, tokenizer, device, idx_to_tag)
+    predict(model, test_path, tokenizer, device, idx_to_tag)
 
 
 if __name__ == '__main__':
