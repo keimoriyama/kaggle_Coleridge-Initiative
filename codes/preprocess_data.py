@@ -6,12 +6,11 @@ from tqdm import tqdm
 from transformers import BertTokenizer
 from nltk.tokenize import sent_tokenize
 
-from more_itertools import chunked
 
 MAX_LENGTH = 256
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
-                                          do_lower_case=False)
+                                          do_lower_case=True)
 path = "../input/train.csv"
 
 df = pd.read_csv(path)
@@ -49,8 +48,8 @@ for json_file in tqdm(train_fiels, total=len(train_fiels)):
                 label_index = 0
                 if dataset_label in sentence:
                     for i in range(len(tokenized_sentence)):
-                        if (len(tokenized_dataset_label) == label_index):
-                            break
+                        if(len(tokenized_dataset_label) <= label_index):
+                            label_index = 0
                         if (tokenized_sentence[i] ==
                                 tokenized_dataset_label[label_index]):
                             if label_index == 0:
@@ -80,4 +79,5 @@ for json_file in tqdm(train_fiels, total=len(train_fiels)):
                     df_t = df_t.append(t)
                     data = []
 
-df_t.to_csv("../input/data_for_bert_only_first.csv", index=False)
+# df_t.to_csv("../input/data_for_bert_only_first.csv", index=False)
+df_t.to_csv("../input/data_for_bert.csv", index=False)

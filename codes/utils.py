@@ -71,11 +71,11 @@ CFG = {
     'hidden_layers': 3,
     "epoch": 10,
     # # 1は事前学習済みモデル
-    "bert_type": 1
+    "bert_type": 0
 }
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
-                                          do_lower_case=False)
+                                          do_lower_case=True)
 
 tag_to_idx = {"B": 1, "I": 2, "O": 3, "[CLS]": 4, "[SEP]": 5, "[PAD]": 0}
 
