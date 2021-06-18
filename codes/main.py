@@ -74,7 +74,7 @@ def main():
         end = time.time()
         elapsed_time = get_time(start, end)
         print(f"epoch:{epoch+1}")
-        print("time: {} train_loss:{}    val_loss:{}".format(
+        print("time: {} train_loss:{} val_loss:{}".format(
             elapsed_time, train_loss, val_loss))
         predict_labels(model, sample_sentence, ans_label, idx_to_tag,
                        tokenizer, device)

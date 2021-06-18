@@ -28,7 +28,6 @@ def predict(model, path, tokenizer, device, idx2tag):
                 token = tokenizer(sentence,
                                   return_attention_mask=False,
                                   return_token_type_ids=False,
-                                  return_length=True,
                                   return_tensors="pt")
                 tensor = token['input_ids'][:, 1:]
                 # print(tensor)
