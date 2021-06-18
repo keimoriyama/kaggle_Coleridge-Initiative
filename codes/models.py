@@ -81,8 +81,8 @@ def train_model(model, optimizer, train_dataloader, device, scheduler=None):
         train_loss.append(loss.item())
         loss.backward()
         optimizer.step()
-        if scheduler is not None:
-            scheduler.step()
+    if scheduler is not None:
+        scheduler.step()
     return model, sum(train_loss) / len(train_loss)
 
 
