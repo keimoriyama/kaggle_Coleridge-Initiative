@@ -1,18 +1,13 @@
 import torch
-import torch.autograd as autograd
 import torch.nn as nn
 import torch.nn.functional as F
 
-from tqdm import tqdm
-
-from transformers import BertTokenizer, BertConfig, BertForTokenClassification, BertModel
+from transformers import BertConfig, BertForTokenClassification
 from transformers import AdamW
 
 from torchcrf import CRF
 
 import numpy as np
-
-import mlflow
 
 
 class BERT_ner(nn.Module):
@@ -22,17 +17,23 @@ class BERT_ner(nn.Module):
         self.hidden2tags = nn.Linear(768, num_tags)
         self.CRF = CRF(num_tags)
 
-    def forward(self, sentence, masks=None, labels=None):
+    def forward(self, sentence, masks=None, labels=None, prediction_mask=None):
         output = self.model(sentence, masks, output_hidden_states=True)
         # print(output)
         hidden = output.logits
         # hidden = self.hidden2tags(hidden)
         if labels is not None:
-            masks = masks.type(torch.uint8)
-            loss = -self.CRF(
-                F.log_softmax(hidden, 2), labels, masks, reduction='mean')
+            hidden = hidden[1:]
+            # [CLS]を無視する
+            labels = labels[1:]
+            prediction_mask = prediction_mask[1:]
+            loss = -self.CRF(F.log_softmax(hidden, 2),
+                             labels,
+                             prediction_mask,
+                             reduction='mean')
             return loss
         else:
+            hidden = hidden[:, 1:]
             pred = self.CRF.decode(hidden)
             return pred
 
@@ -58,14 +59,14 @@ def get_model(tag_to_idx, device, CFG):
 def train_model(model, optimizer, train_dataloader, device, scheduler=None):
     train_loss = []
     model.train()
-    for sentence, label, mask in train_dataloader:
+    for sentence, label, attention_mask, prediction_mask in train_dataloader:
         optimizer.zero_grad()
         sentence = sentence.to(device)
         tags = label.to(device)
-        masks = mask.to(device)
-        loss = model(sentence, masks, tags)
+        attention_mask = attention_mask.to(device)
+        prediction_mask = prediction_mask.to(device)
+        loss = model(sentence, attention_mask, tags, prediction_mask)
         train_loss.append(loss.item())
-        # print(model.CRF.transitions)
         loss.backward()
         optimizer.step()
         if scheduler is not None:
@@ -76,12 +77,13 @@ def train_model(model, optimizer, train_dataloader, device, scheduler=None):
 def val_model(model, test_dataloader, device):
     model.eval()
     test_loss = []
-    for sentence, label, mask in test_dataloader:
+    for sentence, label, attention_mask, prediction_mask in test_dataloader:
         with torch.no_grad():
             sentence = sentence.to(device)
             tags = label.to(device)
-            masks = mask.to(device)
-            loss = model(sentence, masks, tags)
+            attention_mask = attention_mask.to(device)
+            prediction_mask = prediction_mask.to(device)
+            loss = model(sentence, attention_mask, tags, prediction_mask)
             test_loss.append(loss.item())
     return sum(test_loss) / len(test_loss)
 
@@ -95,7 +97,7 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     input = torch.tensor(input, dtype=torch.long)
     # print(input)
     model_input = input.unsqueeze(0).to(device)
-    # print(model_input)
+    # print(model_input.shape[:2])
     with torch.no_grad():
         tags = model(model_input)
     print('input sentence: ', sentence)
