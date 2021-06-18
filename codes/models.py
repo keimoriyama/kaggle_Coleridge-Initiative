@@ -17,24 +17,35 @@ class BERT_ner(nn.Module):
         self.hidden2tags = nn.Linear(768, num_tags)
         self.CRF = CRF(num_tags)
 
-    def forward(self, sentence, masks=None, labels=None, prediction_mask=None):
+    def forward(self,
+                sentence,
+                masks=None,
+                labels=None,
+                prediction_masks=None):
         output = self.model(sentence, masks, output_hidden_states=True)
         # print(output)
-        hidden = output.logits
+        hidden_states = output.logits
         # hidden = self.hidden2tags(hidden)
+        # print(hidden.size())
+        batch_size = hidden_states.size(1)
         if labels is not None:
             # [CLS]
-            hidden = hidden[1:]
-            labels = labels[1:]
-            prediction_mask = prediction_mask[1:]
-            # print(prediction_mask[0].all())
-            loss = -self.CRF(F.log_softmax(hidden, 2),
-                             labels,
-                             prediction_mask,
-                             reduction='mean')
+            # 1文づつ処理したい
+            loss = 0
+            for i in range(batch_size):
+                hidden = hidden_states[:, i]
+                label = labels[:, i]
+                prediction_mask = prediction_masks[:, i]
+                hidden = hidden[prediction_mask].unsqueeze(0)
+                label = label[prediction_mask].unsqueeze(0)
+                # print(hidden.size(j)
+                # print(label.size())
+                loss += -self.CRF(hidden, label, reduction='mean')
+
+            loss = loss / batch_size
             return loss
         else:
-            hidden = hidden[:, 1:]
+            hidden = hidden_states[:, 1:]
             pred = self.CRF.decode(hidden)
             return pred
 
