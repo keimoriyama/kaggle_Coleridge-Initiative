@@ -21,7 +21,7 @@ class sentence_datasets(Dataset):
         return len(self.labels)
 
     def check_word(self, word):
-        return "[CLS]" == word or "[SEP]" == word  #or "##" in word
+        return "[CLS]" == word or "[SEP]" == word or "##" in word
 
     def __getitem__(self, index):
         sentence = self.sentences[index]
@@ -36,7 +36,7 @@ class sentence_datasets(Dataset):
         label = [self.bio2idx[x] for x in label]
         label = torch.tensor(label, dtype=torch.long)
         # print(inputs.size(),mask.size(), label.size())
-        prediction_mask = torch.tensor(prediction_mask, dtype=torch.uint8)
+        prediction_mask = torch.tensor(prediction_mask, dtype=torch.bool)
         """
         if prediction_mask[1] == 0:
             print(sentence)
