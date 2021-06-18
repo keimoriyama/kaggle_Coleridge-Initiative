@@ -23,10 +23,11 @@ class BERT_ner(nn.Module):
         hidden = output.logits
         # hidden = self.hidden2tags(hidden)
         if labels is not None:
+            # [CLS]
             hidden = hidden[1:]
-            # [CLS]を無視する
             labels = labels[1:]
             prediction_mask = prediction_mask[1:]
+            print(prediction_mask[0].all())
             loss = -self.CRF(F.log_softmax(hidden, 2),
                              labels,
                              prediction_mask,
@@ -97,7 +98,7 @@ def predict_labels(model, sentence, label, idx2tag, tokenizer, device):
     input = torch.tensor(input, dtype=torch.long)
     # print(input)
     model_input = input.unsqueeze(0).to(device)
-    # print(model_input.shape[:2])
+    # print(model_input)
     with torch.no_grad():
         tags = model(model_input)
     print('input sentence: ', sentence)
