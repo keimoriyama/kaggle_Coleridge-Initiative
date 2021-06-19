@@ -42,9 +42,20 @@ def predict(model, path, tokenizer, device, idx2tag):
                     sent = tokenizer.convert_ids_to_tokens(tensor.squeeze(0))
                     # print(sent)
                     # print(label)
+                    c = ""
                     for i in range(len(label)):
-                        if label[i] == "B" or label[i] == "I":
-                            print(label[i], sent[i])
+                        if label[i] == "B":
+                            c += sent[i]
+                            while "##" in sent[i + 1]:
+                                c += sent[i + 1].replace("##", "")
+                                i += 1
+                        elif label[i] == "I" and len(c) > 1:
+                            c = c + " " + sent[i]
+                            while "##" in sent[i + 1]:
+                                c += sent[i + 1].replace("##", "")
+                                i += 1
+                    if c:
+                        print(c.replace("##", ""))
 
 
 if __name__ == '__main__':
@@ -54,8 +65,13 @@ if __name__ == '__main__':
     tag_to_idx = get_tag2idx()
     device = get_device()
     model, _, _ = get_model(tag_to_idx, device, CFG)
-    model.load_state_dict(
-        torch.load('./model/model_{}_layers.pth'.format(CFG['hidden_layers']),
-                   map_location=device))
+    if CFG['bert_type'] != 1:
+        model.load_state_dict(
+            torch.load('./model/model_{}_layers.pth'.format(
+                CFG['hidden_layers']),
+                       map_location=device))
+    else:
+        model.load_state_dict(
+            torch.load('./model/pretrained_model.pth', map_location=device))
     path = '../input/test/'
     predict(model, path, tokenizer, device, idx2tag)

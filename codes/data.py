@@ -21,7 +21,7 @@ class sentence_datasets(Dataset):
         return len(self.labels)
 
     def check_word(self, word):
-        return "[CLS]" == word or "[SEP]" == word or "##" in word
+        return "[CLS]" == word or "[SEP]" == word  #or "##" in word
 
     def __getitem__(self, index):
         sentence = self.sentences[index]
