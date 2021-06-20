@@ -65,7 +65,7 @@ def splits_sentence(train_data, tokenizer):
 
 
 CFG = {
-    "csv_name": "data_for_bert_only_first.csv",
+    "csv_name": "data_for_bert.csv",
     "batch_size": 32,
     "debug": False,
     'hidden_layers': 5,
