@@ -6,7 +6,6 @@ from tqdm import tqdm
 from transformers import BertTokenizer
 from nltk.tokenize import sent_tokenize
 
-
 MAX_LENGTH = 256
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
@@ -48,7 +47,7 @@ for json_file in tqdm(train_fiels, total=len(train_fiels)):
                 label_index = 0
                 if dataset_label in sentence:
                     for i in range(len(tokenized_sentence)):
-                        if(len(tokenized_dataset_label) <= label_index):
+                        if (len(tokenized_dataset_label) <= label_index):
                             label_index = 0
                         if (tokenized_sentence[i] ==
                                 tokenized_dataset_label[label_index]):
