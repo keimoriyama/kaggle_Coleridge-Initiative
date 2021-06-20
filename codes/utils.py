@@ -68,10 +68,10 @@ CFG = {
     "csv_name": "data_for_bert_only_first.csv",
     "batch_size": 32,
     "debug": False,
-    'hidden_layers': 3,
+    'hidden_layers': 5,
     "epoch": 20,
     # # 1は事前学習済みモデル
-    "bert_type": 1
+    "bert_type": 0
 }
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased',
