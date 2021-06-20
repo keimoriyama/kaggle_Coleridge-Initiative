@@ -21,6 +21,7 @@ def main():
 
     if 'COLAB_GPU' in set(os.environ.keys()):
         BIO_LABEL = "/content/" + data_name
+        test_path = None
     elif "KAGGLE_URL_BASE" in set(os.environ.keys()):
         BIO_LABEL = "/kaggle/input/train-dataset-coleridge/" + data_name
         test_path = "../input/coleridgeinitiative-show-us-the-data/test/"
@@ -89,8 +90,8 @@ def main():
                    './model/model_{}_layers.pth'.format(CFG['hidden_layers']))
     else:
         torch.save(model.state_dict(), './model/pretrained_model.pth')
-
-    predict(model, test_path, tokenizer, device, idx_to_tag)
+    if test_path is not None:
+        predict(model, test_path, tokenizer, device, idx_to_tag)
 
 
 if __name__ == '__main__':
